@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/bash
 
 #install script
 
@@ -9,7 +9,7 @@ sudo apt update && sudo apt upgrade && snap refresh && sudo apt autoremove
 zsh --version
 ZSH_IS_INSTALLED=$?
 if [ $ZSH_IS_INSTALLED -eq 0 ]; then
-	echo "zsh is already installed"
+	echo "zsh is already installed\n"
 else
 	sudo apt install zsh
 fi
@@ -18,14 +18,14 @@ fi
 sudo apt install curl
 
 #install ohmyzsh if not already installed
-if [ -d "/.oh-my-zsh" ]
+if [ -d "/home/brian/.oh-my-zsh" ] ;
 then
-	echo "You already have OhMyZsh installed"
+	echo "You already have OhMyZsh installed\n"
 else
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-source ~/.zshrc
+chsh -s /usr/bin/zsh
 
 sudo apt install vim
 
@@ -34,7 +34,7 @@ git --version
 GIT_IS_INSTALLED=$?
 if [ $GIT_IS_INSTALLED -eq 0 ];
 then
-	echo "Git is already installed"
+	echo "Git is already installed\n"
 else
 	sudo apt install git
 	git config --global user.email "bflatt72@gmail.com"
@@ -42,12 +42,11 @@ else
 fi
 
 #set up ssh for git/github if not already
-FILE=/.ssh/id_ed25519
-if { -f "$FILE" }; 
-then
-	echo "Key already exists"
+FILE=/home/brian/.ssh/id_ed25519
+if [ -f "$FILE" ]; then 
+	echo "Key already exists\n"
 else
-	echo | echo | ssh-keygen -t ed25519 -C "bflatt72@gmail.com"
+	ssh-keygen -t ed25519 -C "bflatt72@gmail.com"
 	eval "$(ssh-agent -s)"
 	$ ssh-add ~/.ssh/id_ed25519
 fi
@@ -57,7 +56,7 @@ fi
 code --version
 CODE_IS_INSTALLED=$?
 if [ $CODE_IS_INSTALLED -eq 0 ]; then
-	echo "VS Code is already installed"
+	echo "VS Code is already installed\n"
 else
 	sudo apt install software-properties-common apt-transport-https
 	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -67,13 +66,7 @@ else
 	sudo apt install code
 fi
 
-discord --version
-DISCORD_IS_INSTALLED=$?
-if [ $DISCORD_IS_INSTALLED -eq 0 ]; then
-	echo "Discord is already installed"
-else
-	sudo snap install discord
-fi
+sudo snap install discord
 
 
 
