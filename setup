@@ -1,38 +1,79 @@
 #!/usr/bin/sh
 
+#install script
 
+#update and upgrade first
 sudo apt update && sudo apt upgrade && snap refresh && sudo apt autoremove
 
-#install zsh
-sudo apt install zsh
+#install zsh if not already installed
+zsh --version
+ZSH_IS_INSTALLED=$?
+if [ $ZSH_IS_INSTALLED -eq 0 ]; then
+	echo "zsh is already installed"
+else
+	sudo apt install zsh
+fi
 
+#curl is required to download ohmyzsh
 sudo apt install curl
 
-#install ohmyzsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#install ohmyzsh if not already installed
+if [ -d "/.oh-my-zsh" ]
+then
+	echo "You already have OhMyZsh installed"
+else
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
 
 source ~/.zshrc
 
 sudo apt install vim
 
-#install git and set up with github
-sudo apt install git
-git config --global user.email "bflatt72@gmail.com"
-git config --global user.name "bflatt72"
-echo | echo | ssh-keygen -t ed25519 -C "bflatt72@gmail.com"
-eval "$(ssh-agent -s)"
-$ ssh-add ~/.ssh/id_ed25519
+#install git and set up with github if not already
+git --version
+GIT_IS_INSTALLED=$?
+if [ $GIT_IS_INSTALLED -eq 0 ];
+then
+	echo "Git is already installed"
+else
+	sudo apt install git
+	git config --global user.email "bflatt72@gmail.com"
+	git config --global user.name "bflatt72"
+fi
+
+#set up ssh for git/github if not already
+FILE=/.ssh/id_ed25519
+if { -f "$FILE" }; 
+then
+	echo "Key already exists"
+else
+	echo | echo | ssh-keygen -t ed25519 -C "bflatt72@gmail.com"
+	eval "$(ssh-agent -s)"
+	$ ssh-add ~/.ssh/id_ed25519
+fi
 
 
-#install VScode
-sudo apt install software-properties-common apt-transport-https
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
-sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt update
-sudo apt install code
+#install VScode if not already
+code --version
+CODE_IS_INSTALLED=$?
+if [ $CODE_IS_INSTALLED -eq 0 ]; then
+	echo "VS Code is already installed"
+else
+	sudo apt install software-properties-common apt-transport-https
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+	sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
+	sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+	sudo apt update
+	sudo apt install code
+fi
 
-sudo snap install discord
+discord --version
+DISCORD_IS_INSTALLED=$?
+if [ $DISCORD_IS_INSTALLED -eq 0 ]; then
+	echo "Discord is already installed"
+else
+	sudo snap install discord
+fi
 
 
 
