@@ -1,3 +1,5 @@
+#This is a bash install script for setting up a new linux machine with zsh, ohmyzsh, vim, git, and VScode
+
 #!/usr/bin/bash
 
 #install script
