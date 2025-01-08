@@ -3,70 +3,74 @@
 #install script
 
 #update and upgrade first
-sudo apt update && sudo apt upgrade && snap refresh && sudo apt autoremove
+sudo apt update && \
+sudo apt upgrade && \
+snap refresh && \
+sudo apt autoremove
 
 #install zsh if not already installed
-zsh --version
-ZSH_IS_INSTALLED=$?
-if [ $ZSH_IS_INSTALLED -eq 0 ]; then
-	echo "zsh is already installed\n"
+ZSH_INSTALLED=$(command -v zsh)
+if [ -n "$ZSH_INSTALLED" ]; then
+	echo "zsh is already installed"
 else
-	sudo apt install zsh
+	sudo apt install zsh -y
 fi
 
 #curl is required to download ohmyzsh
-sudo apt install curl
+#install curl if not already installed
+curl --version > /dev/null 2>&1
+CURL_IS_INSTALLED=$?
+if [ $CURL_IS_INSTALLED -eq 0 ]; then
+	echo "curl is already installed"
+else
+	sudo apt install curl -y
+fi
 
 #install ohmyzsh if not already installed
-if [ -d "/home/brian/.oh-my-zsh" ] ;
+if [ -d "$HOME/.oh-my-zsh" ] ;
 then
-	echo "You already have OhMyZsh installed\n"
+	echo "You already have OhMyZsh installed"
 else
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 fi
 
-chsh -s /usr/bin/zsh
+chsh -s $(which zsh)
 
 sudo apt install vim
 
 #install git and set up with github if not already
 git --version
 GIT_IS_INSTALLED=$?
-if [ $GIT_IS_INSTALLED -eq 0 ];
-then
-	echo "Git is already installed\n"
+if [ $GIT_IS_INSTALLED -eq 0 ]; then
+	echo "Git is already installed"
 else
-	sudo apt install git
+	sudo apt install git -y
 	git config --global user.email "bflatt72@gmail.com"
 	git config --global user.name "bflatt72"
+	FILE=/home/brian/.ssh/id_ed25519
+	if [ -f "$FILE" ]; then 
+		echo "Key already exists"
+	else
+		ssh-keygen -t ed25519 -C "bflatt72@gmail.com" -N ""
+		eval "$(ssh-agent -s)"
+		ssh-add ~/.ssh/id_ed25519
 fi
-
-#set up ssh for git/github if not already
-FILE=/home/brian/.ssh/id_ed25519
-if [ -f "$FILE" ]; then 
-	echo "Key already exists\n"
-else
-	ssh-keygen -t ed25519 -C "bflatt72@gmail.com"
-	eval "$(ssh-agent -s)"
-	$ ssh-add ~/.ssh/id_ed25519
-fi
-
 
 #install VScode if not already
-code --version
-CODE_IS_INSTALLED=$?
-if [ $CODE_IS_INSTALLED -eq 0 ]; then
-	echo "VS Code is already installed\n"
+CODE_IS_INSTALLED=$(command -v code)
+if [ -n "$CODE_IS_INSTALLED" ]; then
+	echo "VS Code is already installed"
 else
-	sudo apt install software-properties-common apt-transport-https
+	sudo apt install software-properties-common apt-transport-https -y
 	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 	sudo install -o root -g root -m 644 packages.microsoft.gpg /etc/apt/trusted.gpg.d/
 	sudo sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
 	sudo apt update
-	sudo apt install code
-fi
+	sudo apt install code -y
+
 
 sudo snap install discord
+
 
 
 
